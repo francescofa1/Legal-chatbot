@@ -1,0 +1,4 @@
+flask
+llama-index
+openai
+python-dotenv
