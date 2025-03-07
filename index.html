@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Chatbot Web Interface</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #chat-log {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        #user-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        #send-btn {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #chat-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-title">Virtual Legal Assistant</div>
+        <div id="chat-log"></div>
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var user_input = document.getElementById('user-input').value;
+            document.getElementById('chat-log').innerHTML += '<p style="margin: 0; padding: 5px; background-color: #4caf50; color: #fff; border-radius: 3px;">User: ' + user_input + '</p>';
+            
+            // Invia la richiesta al server
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'user_input=' + encodeURIComponent(user_input),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var agent_response = data.response;
+                
+                // Estrai solo il testo dalla risposta JSON
+                if (typeof agent_response === 'object') {
+                    agent_response = agent_response.response;
+                }
+
+                document.getElementById('chat-log').innerHTML += '<p style="margin: 0; padding: 5px; background-color: #ccc; border-radius: 3px;">Assistant: ' + agent_response + '</p>';
+            });
+
+            // Pulisci l'input dell'utente
+            document.getElementById('user-input').value = '';
+        }
+    </script>
+</body>
+</html>
